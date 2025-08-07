@@ -11,7 +11,7 @@ This is a Next.js TypeScript application that serves as a cybersecurity training
 - **Purpose**: Interactive cybersecurity quiz that issues verified credentials
 
 ## Key Components
-- `QuizComponent`: Interactive 3-question cybersecurity quiz
+- `QuizComponent`: Interactive 5-question cybersecurity quiz covering 2FA, passwords, phishing, ransomware, and email security
 - `CredentialResult`: Displays results and handles credential issuance
 - Microsoft Verified ID integration for credential issuance
 

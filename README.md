@@ -4,7 +4,7 @@ A modern web application that provides interactive cybersecurity training and is
 
 ## ✨ Features
 
-- **Interactive Quiz**: 3 cybersecurity questions covering essential security concepts
+- **Interactive Quiz**: 5 cybersecurity questions covering essential security concepts
 - **Real-time Feedback**: Immediate explanations for each answer
 - **Progress Tracking**: Visual progress indicator throughout the quiz
 - **Verified Credentials**: Integration with Microsoft Verified ID for credential issuance
@@ -143,7 +143,7 @@ src/
 
 ## 🎯 How It Works
 
-1. **Take the Quiz**: Users answer 3 cybersecurity questions
+1. **Take the Quiz**: Users answer 5 cybersecurity questions
 2. **Get Feedback**: Immediate explanations for each answer
 3. **View Results**: See your score and performance
 4. **Earn Credentials**: Successful completion (67%+) allows credential issuance
@@ -194,10 +194,12 @@ The cybersecurity assessment covers:
 - Two-factor authentication (2FA)
 - Password security best practices
 - Phishing attacks and social engineering
+- Ransomware threats and protection
+- Email security and suspicious communications
 
 ## 🏆 Credential System
 
-- **Passing Score**: 67% (2 out of 3 questions correct)
+- **Passing Score**: 60% (3 out of 5 questions correct)
 - **Credential Type**: Cybersecurity Training Certificate
 - **Verification**: Microsoft Verified ID technology
 - **Portability**: Credentials can be shared and verified across platforms

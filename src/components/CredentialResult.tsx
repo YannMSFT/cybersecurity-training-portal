@@ -12,9 +12,9 @@ export default function CredentialResult({ score, onReset }: CredentialResultPro
   const [credentialIssued, setCredentialIssued] = useState(false)
   const [credentialId, setCredentialId] = useState('')
 
-  const totalQuestions = 3
+  const totalQuestions = 5
   const percentage = Math.round((score / totalQuestions) * 100)
-  const passed = score >= 2 // Need at least 2/3 correct to pass
+  const passed = score >= 3 // Need at least 3/5 correct (60%) to pass
 
   const issueCredential = async () => {
     setIsIssuing(true)
@@ -70,7 +70,7 @@ export default function CredentialResult({ score, onReset }: CredentialResultPro
           </p>
         ) : (
           <p className="text-lg text-red-600 font-medium">
-            📚 Keep studying! You need at least 67% to pass
+            📚 Keep studying! You need at least 60% to pass
           </p>
         )}
       </div>

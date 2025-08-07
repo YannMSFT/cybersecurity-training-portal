@@ -46,6 +46,30 @@ const questions: Question[] = [
     ],
     correctAnswer: 2,
     explanation: "Phishing is a social engineering attack where attackers impersonate legitimate entities to steal sensitive information like passwords or credit card details."
+  },
+  {
+    id: 4,
+    question: "Which of the following best describes ransomware?",
+    options: [
+      "Software that protects against viruses",
+      "Malicious software that encrypts files and demands payment for decryption",
+      "A tool for backing up important data",
+      "A type of firewall protection"
+    ],
+    correctAnswer: 1,
+    explanation: "Ransomware is malicious software that encrypts a victim's files and demands payment (usually in cryptocurrency) in exchange for the decryption key."
+  },
+  {
+    id: 5,
+    question: "What should you do if you receive a suspicious email asking for personal information?",
+    options: [
+      "Reply immediately with the requested information",
+      "Forward it to all your contacts to warn them",
+      "Delete the email and report it to your IT security team",
+      "Click on any links to verify if it's legitimate"
+    ],
+    correctAnswer: 2,
+    explanation: "Never provide personal information via email. Delete suspicious emails and report them to your IT security team. Legitimate organizations will never ask for sensitive information via email."
   }
 ]
 
