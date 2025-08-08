@@ -22,7 +22,7 @@ export default function SignIn() {
             🛡️ Sign In
           </h1>
           <p className="text-gray-600">
-            Access the Cybersecurity Training Portal
+            Access the Cyber Practitioner Evaluation
           </p>
         </div>
 

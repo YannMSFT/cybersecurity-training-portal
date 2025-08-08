@@ -1,16 +1,29 @@
 'use client'
 
 import { useState } from 'react'
+import QRCodeDisplay from './QRCodeDisplay'
 
 interface CredentialResultProps {
   score: number
   onReset: () => void
 }
 
+interface CredentialIssuanceResponse {
+  success: boolean
+  requestId: string
+  url: string
+  qrCode: string
+  expiry: string
+  state: string
+  error?: string
+}
+
 export default function CredentialResult({ score, onReset }: CredentialResultProps) {
   const [isIssuing, setIsIssuing] = useState(false)
   const [credentialIssued, setCredentialIssued] = useState(false)
-  const [credentialId, setCredentialId] = useState('')
+  const [qrCodeData, setQrCodeData] = useState<string | null>(null)
+  const [credentialUrl, setCredentialUrl] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const totalQuestions = 5
   const percentage = Math.round((score / totalQuestions) * 100)
@@ -18,21 +31,41 @@ export default function CredentialResult({ score, onReset }: CredentialResultPro
 
   const issueCredential = async () => {
     setIsIssuing(true)
+    setError(null)
     
-    // Simulate Microsoft Verified ID credential issuance
     try {
-      // In a real implementation, this would call Microsoft Verified ID APIs
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
-      // Generate a mock credential ID
-      const mockCredentialId = `cred_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-      setCredentialId(mockCredentialId)
-      setCredentialIssued(true)
+      // Call the Microsoft Verified ID API
+      const response = await fetch('/api/verifiable-credentials/issue', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          score,
+          totalQuestions
+        })
+      })
+
+      const data: CredentialIssuanceResponse = await response.json()
+
+      if (data.success) {
+        setQrCodeData(data.qrCode)
+        setCredentialUrl(data.url)
+        setCredentialIssued(true)
+      } else {
+        setError(data.error || 'Failed to issue credential')
+      }
     } catch (error) {
       console.error('Failed to issue credential:', error)
+      setError('Network error occurred while issuing credential')
     } finally {
       setIsIssuing(false)
     }
+  }
+
+  const closeQRCode = () => {
+    setQrCodeData(null)
+    setCredentialUrl(null)
   }
 
   const getScoreColor = () => {
@@ -105,22 +138,21 @@ export default function CredentialResult({ score, onReset }: CredentialResultPro
         </div>
       )}
 
-      {credentialIssued && (
+      {credentialIssued && !qrCodeData && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-6">
           <h3 className="text-xl font-bold text-green-800 mb-3">
-            ✅ Credential Successfully Issued!
+            ✅ Credential Request Initiated!
           </h3>
           <p className="text-green-700 mb-4">
-            Your cybersecurity training credential has been issued and is now available in your digital wallet.
+            Your cybersecurity training credential request has been processed successfully.
           </p>
           
           <div className="bg-white border border-green-300 rounded-lg p-4 mb-4">
             <h4 className="font-semibold text-gray-800 mb-2">Credential Details:</h4>
             <div className="text-sm text-gray-600 space-y-1">
-              <p><strong>Type:</strong> Cybersecurity Training Certificate</p>
-              <p><strong>Issuer:</strong> Cybersecurity Training Portal</p>
+              <p><strong>Type:</strong> Cybersecurity Practitioner</p>
+              <p><strong>Issuer:</strong> Cyber Practitioner Evaluation</p>
               <p><strong>Score:</strong> {score}/{totalQuestions} ({percentage}%)</p>
-              <p><strong>Credential ID:</strong> {credentialId}</p>
               <p><strong>Issued:</strong> {new Date().toLocaleDateString()}</p>
             </div>
           </div>
@@ -128,6 +160,23 @@ export default function CredentialResult({ score, onReset }: CredentialResultPro
           <div className="text-sm text-green-600">
             <p>🔗 This credential is verifiable using Microsoft Verified ID technology</p>
           </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+          <h3 className="text-xl font-bold text-red-800 mb-3">
+            ❌ Credential Issuance Failed
+          </h3>
+          <p className="text-red-700 mb-4">
+            {error}
+          </p>
+          <button
+            onClick={issueCredential}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+          >
+            Try Again
+          </button>
         </div>
       )}
 
@@ -165,6 +214,15 @@ export default function CredentialResult({ score, onReset }: CredentialResultPro
           </button>
         )}
       </div>
+
+      {/* QR Code Modal */}
+      {qrCodeData && credentialUrl && (
+        <QRCodeDisplay
+          qrCodeData={qrCodeData}
+          requestUrl={credentialUrl}
+          onClose={closeQRCode}
+        />
+      )}
     </div>
   )
 }

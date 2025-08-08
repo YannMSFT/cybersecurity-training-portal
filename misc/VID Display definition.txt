@@ -1,0 +1,30 @@
+{
+  "locale": "en-US",
+  "card": {
+    "title": "Cybersecurity practitioner",
+    "issuedBy": "Contoso",
+    "backgroundColor": "#eff3fe",
+    "textColor": "#4277D5",
+    "logo": {
+      "uri": "https://raw.githubusercontent.com/YannMSFT/Static-content/main/VID-logo.png",
+      "description": "Cyberpractitioner logo"
+    },
+    "description": "This credential certify you've successfully validated our internal Cybersecurity practitioner training"
+  },
+  "consent": {
+    "title": "Cybersecurity practitioner",
+    "instructions": "Authenticate to give consent"
+  },
+  "claims": [
+    {
+      "claim": "vc.credentialSubject.firstName",
+      "label": "Name",
+      "type": "String"
+    },
+    {
+      "claim": "vc.credentialSubject.lastName",
+      "label": "Surname",
+      "type": "String"
+    }
+  ]
+}

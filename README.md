@@ -239,6 +239,31 @@ For real Microsoft Verified ID integration:
 User Authentication (Entra ID) → Quiz Completion → Credential Issuance (Verified ID)
 ```
 
+### Production Setup Steps
+
+1. **Enable Microsoft Verified ID**:
+   - Go to Azure Portal → Microsoft Entra ID → Verified ID
+   - Complete domain verification process
+   - Configure issuer settings
+
+2. **Create Credential Definition**:
+   - Use the provided `VID Display definition.txt` as a template
+   - Upload to your Verified ID service
+   - Note the manifest URL and credential type
+
+3. **Update Environment Variables**:
+   ```env
+   VERIFIABLE_CREDENTIAL_ENDPOINT=https://verifiedid.did.msidentity.com/v1.0/verifiableCredentials/contracts
+   VERIFIABLE_CREDENTIAL_AUTHORITY=did:web:yourtenant.verifiedid.microsoft.com
+   VERIFIABLE_CREDENTIAL_TYPE=CybersecurityPractitioner
+   VERIFIABLE_CREDENTIAL_MANIFEST=https://verifiedid.did.msidentity.com/v1.0/yourtenant/verifiableCredential/contracts/CybersecurityPractitioner
+   ```
+
+4. **Test Credential Flow**:
+   - Complete the quiz with passing score
+   - Verify QR code generation
+   - Test with Microsoft Authenticator app
+
 ## 🎨 Customization
 
 ### Adding Questions

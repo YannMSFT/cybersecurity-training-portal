@@ -16,7 +16,7 @@ export default function AuthenticatedLayout({ children, user }: AuthenticatedLay
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <h2 className="text-xl font-semibold text-gray-800">
-                🛡️ Cybersecurity Training Portal
+                🛡️ Cyber Practitioner Evaluation
               </h2>
             </div>
             <div className="flex items-center space-x-4">

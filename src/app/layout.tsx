@@ -3,8 +3,8 @@ import AuthProvider from '@/components/AuthProvider'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Cybersecurity Training Portal',
-  description: 'Complete cybersecurity training and earn verified credentials',
+  title: 'Cyber Practitioner Evaluation',
+  description: 'Validate your knowledge from the Cyber practitioner internal training program and earn verified credentials',
 }
 
 export default function RootLayout({
