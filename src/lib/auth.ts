@@ -9,6 +9,10 @@ export const authOptions: NextAuthOptions = {
       tenantId: process.env.AZURE_AD_TENANT_ID!,
     }),
   ],
+  session: {
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
   callbacks: {
     async jwt({ token, account }) {
       // Persist the OAuth access_token to the token right after signin
@@ -27,4 +31,5 @@ export const authOptions: NextAuthOptions = {
     signIn: '/auth/signin',
     error: '/auth/error',
   },
+  debug: process.env.NODE_ENV === 'development',
 }

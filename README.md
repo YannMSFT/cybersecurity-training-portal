@@ -1,4 +1,4 @@
-# 🛡️ Cybersecurity Training Portal
+# 🛡️ Cyber Practitioner Evaluation
 
 A modern web application that provides interactive cybersecurity training and issues verified credentials using Microsoft Verified ID platform.
 
@@ -7,9 +7,11 @@ A modern web application that provides interactive cybersecurity training and is
 - **Interactive Quiz**: 5 cybersecurity questions covering essential security concepts
 - **Real-time Feedback**: Immediate explanations for each answer
 - **Progress Tracking**: Visual progress indicator throughout the quiz
-- **Verified Credentials**: Integration with Microsoft Verified ID for credential issuance
+- **Microsoft Verified ID Integration**: Real credential issuance using Microsoft Verified ID platform
+- **Entra ID Authentication**: Secure organizational authentication
 - **Responsive Design**: Modern UI that works on all devices
 - **Accessibility**: Built with semantic HTML and ARIA support
+- **QR Code Generation**: Working QR codes for credential acceptance
 
 ## 🚀 Getting Started
 
@@ -31,7 +33,7 @@ Before running the application, you need to configure authentication with Micros
 4. Fill in the details:
 
 ```
-Name: Cybersecurity Training Portal
+Name: Cyber Practitioner Evaluation
 Supported account types: Accounts in this organizational directory only (Single tenant)
 Redirect URI: 
   - Platform: Web
@@ -68,7 +70,7 @@ After creating the app registration:
 
 1. Go to **Certificates & secrets**
 2. Click **"New client secret"**
-3. Add description: `Cybersecurity Training Portal Secret`
+3. Add description: `Cyber Practitioner Evaluation Secret`
 4. Set expiration: **24 months** (or as per your organization's policy)
 5. **Copy the secret value immediately** - you won't see it again!
 
@@ -87,7 +89,7 @@ Client Secret: [The secret you just created]
 Create a `.env.local` file in the project root with the following variables:
 
 ```env
-# Azure AD Configuration
+# Microsoft Entra ID (Azure AD) Configuration
 AZURE_AD_CLIENT_ID=your-application-client-id
 AZURE_AD_CLIENT_SECRET=your-client-secret
 AZURE_AD_TENANT_ID=your-tenant-id
@@ -95,6 +97,13 @@ AZURE_AD_TENANT_ID=your-tenant-id
 # NextAuth Configuration
 NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=your-random-secret-key-generate-one
+
+# Microsoft Verified ID Configuration (Required for credential issuance)
+VERIFIABLE_CREDENTIAL_ENDPOINT=https://verifiedid.did.msidentity.com/v1.0/verifiableCredentials/createIssuanceRequest
+VERIFIABLE_CREDENTIAL_AUTHORITY=did:web:verifiedid.entra.microsoft.com:your-tenant-id:your-authority-id
+VERIFIABLE_CREDENTIAL_TYPE=VerifiedCredentialExpert
+VERIFIABLE_CREDENTIAL_MANIFEST=https://verifiedid.did.msidentity.com/v1.0/tenants/your-tenant-id/verifiableCredentials/contracts/your-contract-id/manifest
+VERIFIABLE_CREDENTIAL_CONTRACT_ID=your-contract-id
 ```
 
 > **Important**: Never commit the `.env.local` file to version control. Add it to your `.gitignore`.
@@ -134,28 +143,47 @@ bun dev
 src/
 ├── app/
 │   ├── layout.tsx          # Root layout component
-│   ├── page.tsx            # Main page component
-│   └── globals.css         # Global styles
-└── components/
-    ├── QuizComponent.tsx   # Interactive quiz component
-    └── CredentialResult.tsx # Results and credential issuance
+│   ├── page.tsx            # Main application with welcome/quiz/results flow
+│   ├── globals.css         # Global styles
+│   ├── auth/
+│   │   └── signin/
+│   │       └── page.tsx    # Authentication page
+│   └── api/
+│       ├── auth/
+│       │   └── [...nextauth]/
+│       │       └── route.ts # NextAuth configuration
+│       └── verifiable-credentials/
+│           └── issue/
+│               └── route.ts # Microsoft Verified ID API integration
+├── components/
+│   ├── QuizComponent.tsx   # Interactive quiz component
+│   ├── CredentialResult.tsx # Results and credential issuance
+│   ├── QRCodeDisplay.tsx   # QR code display component
+│   └── AuthProvider.tsx    # Authentication context provider
+└── lib/
+    └── auth.ts             # NextAuth configuration
 ```
 
 ## 🎯 How It Works
 
-1. **Take the Quiz**: Users answer 5 cybersecurity questions
-2. **Get Feedback**: Immediate explanations for each answer
-3. **View Results**: See your score and performance
-4. **Earn Credentials**: Successful completion (67%+) allows credential issuance
-5. **Verified ID**: Credentials are issued using Microsoft Verified ID technology
+1. **Authentication**: Users sign in with their Entra ID organizational account
+2. **Welcome Page**: Introduction to the Cyber Practitioner Evaluation
+3. **Take the Quiz**: Users answer 5 cybersecurity questions
+4. **Get Feedback**: Immediate explanations for each answer
+5. **View Results**: See your score and performance
+6. **Earn Credentials**: Successful completion (60%+) triggers credential issuance
+7. **Verified ID**: Real Microsoft Verified ID credentials are issued with QR codes
+8. **Digital Wallet**: Users can scan QR codes to add credentials to their digital wallet
 
 ## 🔧 Technology Stack
 
 - **Framework**: Next.js 15 with App Router
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
-- **Authentication**: Microsoft Entra ID (Azure AD)
-- **Credentials**: Microsoft Verified ID (mock implementation)
+- **Authentication**: NextAuth.js with Microsoft Entra ID provider
+- **Credentials**: Microsoft Verified ID (production integration)
+- **Session Management**: Server-side session handling
+- **API Integration**: REST API endpoints for credential issuance
 - **Deployment**: Ready for Vercel, Netlify, or any Node.js hosting
 
 ## 🔐 Authentication & Security
@@ -200,69 +228,86 @@ The cybersecurity assessment covers:
 ## 🏆 Credential System
 
 - **Passing Score**: 60% (3 out of 5 questions correct)
-- **Credential Type**: Cybersecurity Training Certificate
+- **Credential Type**: VerifiedCredentialExpert
 - **Verification**: Microsoft Verified ID technology
 - **Portability**: Credentials can be shared and verified across platforms
+- **Claims**: Includes user name, email, quiz score, and completion date
+- **QR Code**: Working QR codes for digital wallet integration
+- **Contract ID**: d4d9372b-e1b2-ad46-b484-6a767ea888ec
 
 ## 🔐 Microsoft Verified ID Integration
 
-This application includes mock integration with Microsoft Verified ID for credential issuance. The authentication is handled separately by Entra ID.
+This application includes **production-ready** integration with Microsoft Verified ID for credential issuance.
 
-### Current Implementation (Mock)
-- Simulated credential issuance process
-- Mock credential IDs and metadata
-- Ready for production integration
+### Current Implementation Status ✅
+- ✅ Real Microsoft Verified ID API integration
+- ✅ Working credential issuance process
+- ✅ QR code generation and display
+- ✅ Proper error handling and logging
+- ✅ Token authentication with correct scopes
+- ✅ Production endpoint configuration
 
-### Production Setup
-For real Microsoft Verified ID integration:
+### Recent Fixes Applied
+- **API Endpoint**: Updated to use global Microsoft Verified ID endpoint
+- **Authentication**: Simplified to use working token scope (`3db474b9-6a0c-4840-96ac-1fceb342124f/.default`)
+- **Request Format**: Optimized payload structure for successful credential issuance
+- **Error Handling**: Enhanced JSON parsing and response handling
+- **QR Code Display**: Fixed duplicate data URL prefix issues
 
-1. **Set up Verified ID Service**:
-   - Enable Microsoft Verified ID in your Azure tenant
-   - Configure issuer settings and domain verification
+### Production Configuration
+The application is configured for production use with:
 
-2. **Create Credential Definitions**:
-   - Define cybersecurity training credential schema
-   - Configure display properties and claims
-
-3. **Implement API Integration**:
-   - Replace mock functions with actual Verified ID APIs
-   - Add credential issuance workflows
-   - Implement verification endpoints
-
-4. **Security Considerations**:
-   - Separate authentication (Entra ID) from credential issuance
-   - Validate user identity before issuing credentials
-   - Implement proper audit logging
-
-### Integration Architecture
-```
-User Authentication (Entra ID) → Quiz Completion → Credential Issuance (Verified ID)
+```env
+VERIFIABLE_CREDENTIAL_ENDPOINT=https://verifiedid.did.msidentity.com/v1.0/verifiableCredentials/createIssuanceRequest
+VERIFIABLE_CREDENTIAL_AUTHORITY=did:web:verifiedid.entra.microsoft.com:your-tenant-id:your-authority-id
+VERIFIABLE_CREDENTIAL_TYPE=VerifiedCredentialExpert
+VERIFIABLE_CREDENTIAL_MANIFEST=https://verifiedid.did.msidentity.com/v1.0/tenants/your-tenant-id/verifiableCredentials/contracts/your-contract-id/manifest
 ```
 
-### Production Setup Steps
+### Authentication Flow
+```
+User Login (Entra ID) → Quiz Completion → Score Validation → Credential Issuance (Verified ID) → QR Code Display
+```
 
-1. **Enable Microsoft Verified ID**:
-   - Go to Azure Portal → Microsoft Entra ID → Verified ID
-   - Complete domain verification process
-   - Configure issuer settings
+### Setup Requirements
 
-2. **Create Credential Definition**:
-   - Use the provided `VID Display definition.txt` as a template
-   - Upload to your Verified ID service
-   - Note the manifest URL and credential type
+For production deployment, ensure:
 
-3. **Update Environment Variables**:
-   ```env
-   VERIFIABLE_CREDENTIAL_ENDPOINT=https://verifiedid.did.msidentity.com/v1.0/verifiableCredentials/contracts
-   VERIFIABLE_CREDENTIAL_AUTHORITY=did:web:yourtenant.verifiedid.microsoft.com
-   VERIFIABLE_CREDENTIAL_TYPE=CybersecurityPractitioner
-   VERIFIABLE_CREDENTIAL_MANIFEST=https://verifiedid.did.msidentity.com/v1.0/yourtenant/verifiableCredential/contracts/CybersecurityPractitioner
-   ```
+1. **Microsoft Verified ID Service Enabled**:
+   - Azure tenant with Verified ID service activated
+   - Domain verification completed
+   - Issuer authority configured
 
-4. **Test Credential Flow**:
-   - Complete the quiz with passing score
-   - Verify QR code generation
-   - Test with Microsoft Authenticator app
+2. **Credential Contract Created**:
+   - Use the provided `VID Display definition.txt` and `VID Rules definition.txt`
+   - Contract ID properly configured in environment variables
+   - Manifest URL accessible
+
+3. **App Registration Permissions**:
+   - Verified ID issuance permissions granted
+   - Service principal configured with appropriate scopes
+   - Client credentials flow enabled
+
+4. **Environment Configuration**:
+   - All required environment variables set
+   - Endpoint URLs properly configured
+   - Authentication tokens working
+
+### Troubleshooting Common Issues
+
+- **"Not Found" Errors**: Verify the endpoint URL and tenant ID
+- **Token Authentication Failures**: Check client ID and secret configuration
+- **JSON Parsing Errors**: Ensure proper response format handling
+- **QR Code Issues**: Verify credential contract and manifest URLs
+- **Callback URL Errors**: Remove callback configuration for localhost development
+
+### Testing Verification
+
+1. Complete the quiz with a passing score
+2. Click "Issue Microsoft Verified Credential"
+3. Verify QR code appears without errors
+4. Test with Microsoft Authenticator or compatible digital wallet
+5. Confirm credential details and claims are correct
 
 ## 🎨 Customization
 
@@ -314,5 +359,7 @@ This project is for educational and demonstration purposes.
 - [Cybersecurity Best Practices](https://www.cisa.gov/cybersecurity-best-practices)
 
 ---
+
+**Status**: ✅ Production Ready - Microsoft Verified ID integration fully functional
 
 Built with ❤️ using Next.js and Microsoft Verified ID

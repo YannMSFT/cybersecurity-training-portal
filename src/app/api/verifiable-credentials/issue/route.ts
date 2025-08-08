@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     // Generate unique state for this request
     const state = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
     
-    // Prepare the Microsoft Verified ID request
+    // Prepare the Microsoft Verified ID request using the working format
     const verifiedIdRequest = {
       includeQRCode: true,
       authority: process.env.VERIFIABLE_CREDENTIAL_AUTHORITY!,
@@ -47,12 +47,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Get access token for Microsoft Verified ID API - try different scopes
-    let tokenData = null
-    let tokenResponse = null
-
-    // Try the Verified ID service endpoint scope first
-    tokenResponse = await fetch(`https://login.microsoftonline.com/${process.env.AZURE_AD_TENANT_ID}/oauth2/v2.0/token`, {
+    // Get access token for Microsoft Verified ID API using working scope
+    const tokenResponse = await fetch(`https://login.microsoftonline.com/${process.env.AZURE_AD_TENANT_ID}/oauth2/v2.0/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -60,30 +56,12 @@ export async function POST(request: NextRequest) {
       body: new URLSearchParams({
         client_id: process.env.AZURE_AD_CLIENT_ID!,
         client_secret: process.env.AZURE_AD_CLIENT_SECRET!,
-        scope: 'https://verifiedid.did.msidentity.com/.default',
+        scope: '3db474b9-6a0c-4840-96ac-1fceb342124f/.default',
         grant_type: 'client_credentials'
       })
     })
 
-    tokenData = await tokenResponse.json()
-    
-    // If that fails, try the service principal ID
-    if (!tokenResponse.ok) {
-      console.log('First scope failed, trying service principal ID scope...')
-      tokenResponse = await fetch(`https://login.microsoftonline.com/${process.env.AZURE_AD_TENANT_ID}/oauth2/v2.0/token`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          client_id: process.env.AZURE_AD_CLIENT_ID!,
-          client_secret: process.env.AZURE_AD_CLIENT_SECRET!,
-          scope: '3db474b9-6a0c-4840-96ac-1fceb342124f/.default',
-          grant_type: 'client_credentials'
-        })
-      })
-      tokenData = await tokenResponse.json()
-    }
+    const tokenData = await tokenResponse.json()
     
     if (!tokenResponse.ok) {
       console.error('Token request failed:', {
@@ -117,7 +95,62 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify(verifiedIdRequest)
     })
 
-    const issuanceData = await issuanceResponse.json()
+    // Check if the response is JSON before parsing
+    const contentType = issuanceResponse.headers.get('content-type')
+    let issuanceData
+    
+    if (contentType && contentType.includes('application/json')) {
+      try {
+        issuanceData = await issuanceResponse.json()
+      } catch (jsonError) {
+        console.error('JSON parsing failed:', jsonError)
+        const textResponse = await issuanceResponse.text()
+        console.error('Raw response:', textResponse)
+        
+        return NextResponse.json(
+          { 
+            error: 'Invalid JSON response from Verified ID service', 
+            details: textResponse,
+            status: issuanceResponse.status
+          }, 
+          { status: 500 }
+        )
+      }
+    } else {
+      // If not JSON, get text response for debugging
+      const textResponse = await issuanceResponse.text()
+      console.error('Non-JSON response:', textResponse)
+      console.error('Response status:', issuanceResponse.status)
+      console.error('Response headers:', Object.fromEntries(issuanceResponse.headers.entries()))
+      
+      // Check if it's a successful response with QR code data in text format
+      if (issuanceResponse.ok && textResponse.includes('data:image')) {
+        // Handle successful text response that might contain QR code
+        try {
+          // Try to extract QR code if present
+          const qrMatch = textResponse.match(/data:image\/[^;]+;base64[^"]+/)
+          if (qrMatch) {
+            return NextResponse.json({
+              success: true,
+              qrCode: qrMatch[0],
+              url: textResponse,
+              state: state
+            })
+          }
+        } catch (parseError) {
+          console.error('Failed to parse successful text response:', parseError)
+        }
+      }
+      
+      return NextResponse.json(
+        { 
+          error: 'Invalid response format from Verified ID service', 
+          details: textResponse,
+          status: issuanceResponse.status
+        }, 
+        { status: 500 }
+      )
+    }
 
     if (!issuanceResponse.ok) {
       const errorDetails = {
