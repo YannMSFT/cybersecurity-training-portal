@@ -99,8 +99,8 @@ export default function Home() {
                       Certification
                     </h3>
                     <p className="text-green-700 text-sm">
-                      Upon successful completion (60% or higher), you'll receive a verified digital credential 
-                      powered by Microsoft Verified ID that you can add to your professional portfolio.
+                      Upon Upon perfect completion (100% score), you'll receive a verified digital credential 
+                      powered by Microsoft Verified ID that you can add to your Microsoft Authenticator application.
                     </p>
                   </div>
                 </div>
