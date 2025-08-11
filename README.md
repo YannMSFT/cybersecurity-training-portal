@@ -360,6 +360,6 @@ This project is for educational and demonstration purposes.
 
 ---
 
-**Status**: ✅ Production Ready - Microsoft Verified ID integration fully functional
+**Status**: ✅ Production Not-Ready - Microsoft Verified ID integration fully functional, but this code is for testing/demo only.
 
-Built with ❤️ using Next.js and Microsoft Verified ID
+Built with ❤️ using Github Copilot and Claude Sonnet 4
